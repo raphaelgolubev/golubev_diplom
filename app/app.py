@@ -6,6 +6,7 @@ app = Flask(__name__)
 app.config.from_object(Configuration)
 
 ##Тут я протестировал GIT
+##и еще раз
 
 #Реализация авторизации
 from flask_login import LoginManager
