@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+    {% block DOC_TITLE %}
+        Разработка
+    {% endblock %}
+
+    {% block CUSTOM_HEAD %}
+        <style>
+            .full-table {
+                overflow: auto;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: auto;
+                height: auto;
+                max-width: 90%;
+                max-height: 50%;
+                background: #fff;
+                z-index: 1;
+            }
+            .full-table table {
+                border: 1px ridge #000;
+                border-collapse: collapse;
+            }
+            .full-table td {
+                border: 1px ridge #000;
+                text-align: center;
+                padding: 1rem;
+            }
+            .full-table .ft-close {
+                position: sticky;
+                cursor: pointer;
+                top: 16px;
+                left: calc(100% - 50px);
+                width: 50px;
+                height: 50px;
+                background: url(/static/root/assets/close.png) center no-repeat;
+                background-size: auto;
+                transform: translateY(-16px) scale(0.5);
+            }
+
+            ul.database-table-window {
+                padding: 0;
+            }
+
+            .table-card {
+                display: flex;
+                text-transform: uppercase;
+                overflow: auto;
+                overflow-x: hidden;
+                background-color: rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+                margin: 1rem;
+                display: inline-flex;
+                width: 350px;
+                height: auto;
+                box-shadow: 0 1px 3px rgba(255,255,255,0.12), 0 1px 2px rgba(255,255,255,0.24);
+                transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            }
+            .table-card:hover {
+                box-shadow: 0 14px 28px rgba(255,255,255,0.25), 0 10px 10px rgba(255,255,255,0.22);
+            }
+            .table-card-name {
+                font-weight: 700;
+            }
+            .table-card-subname {
+                font-weight: 100;
+                font-size: 1.1vw;
+            }
+            .table-card div {
+                position: relative;
+                width: 100%;
+            }
+            .table-card button {
+                cursor: pointer;
+                position: absolute;
+                top: 0;
+                left: calc(100% - 110px);
+                margin: 1rem;
+                outline: none;
+                color: rgba(255, 255, 255, 0.75);
+                background: transparent;
+                border: 2px;
+                border-style: ridge;
+                border-color: rgba(255, 255, 255, 0.2);
+                padding: 1rem;
+            }
+            .table-card button:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            .table-card div p {
+                margin-left: 1rem;
+                color: rgba(255, 255, 255, 0.75);
+            }
+            .table-card div ul {
+                list-style: none;
+                padding: 0;
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+            .table-card div ul li {
+                overflow: hidden;
+                min-height: 25px;
+                margin-top: 1rem;
+                border: 2px;
+                border-style: ridge;
+                border-color: rgba(255, 255, 255, 0.2);
+                padding: 1rem;
+                color: rgba(255, 255, 255, 0.5);
+                font-size: 1.5vh;
+            }
+        </style>
+        <script>
+            addEventListener('click', function(evt) {
+                var elem = evt.srcElement;
+                if (elem.hasAttribute('ca_action'))
+                {
+                    if (elem.getAttribute('ca_action').toLowerCase() == 'full-table-show')
+                    {
+                        ShowFullTable(evt);
+                    }
+                    if (elem.getAttribute('ca_action').toLowerCase() == 'full-table-close')
+                    {
+                        CloseFullTable();
+                    }
+                }
+            });
+            function ShowFullTable(evt)
+            {
+                var tableid = evt.srcElement.parentElement.parentElement.id;
+                var full_table = document.getElementsByClassName('full-table')[0];
+                full_table.style.cssText += 'display: block';
+                var ultable = document.getElementById(tableid + '_full');
+                ultable.style.cssText += 'display: block';
+            }
+            function CloseFullTable()
+            {
+                var full_table = document.getElementsByClassName('full-table')[0];
+                full_table.style.cssText += 'display: none';
+                for (var ultable of full_table.children)
+                {
+                    if (ultable.nodeName == 'UL')
+                    ultable.style.cssText += 'display: none';
+                }
+            }
+        </script>
+    {% endblock %}
+
+            {% block LOGO_POSTFIX %}
+    		    <div class="header-block" style="width: auto;">
+                    <p style="font-weight: 200;font-size: 1.3em;">| develop</p>
+    	        </div>
+	        {% endblock %}
+
+            {% block CUSTOM_CODE %}
+                <div class="full-table" style="display: none;">
+                    <div class="ft-close" ca_action="full-table-close"></div>
+                    {% for t in tables %}
+                            <ul class="database-table-window" id="{{t}}_full" style="display: none;">
+                                <p style="margin:1rem"> Таблица "{{t}}"</p>
+                                <table style="margin:1rem">
+                                    <tbody>
+                                        <tr>
+                                            {% for c in cols %}
+                                                {% for c_key in c %}
+                                                    {% if c_key==t %}
+                                                        <td>{{c[c_key]}}</td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </tr>
+                                        {% for item in result %}
+                                            {% for key in item %}
+                                                <tr>
+                                                    {% if key==t %}
+                                                        {% for cell in item[key]%}
+                                                            <td>{{cell}}</td>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </ul>
+                    {% endfor %}
+                </div>
+            {% endblock %}
+
+            <!-- Содержание -->
+            {% block CONTENT %}
+                <div class="full-page start-slide fadeUp-start-state"
+                    style="padding-left: 3rem; display: inline-block; top:90px;" id="myblock">
+                    {% for t in tables %}
+                        <div class="table-card" id="{{t}}">
+                            <div>
+                                <p class="table-card-name">{{t}}</p>
+                                <p class="table-card-subname">таблица</p>
+                                <button ca_action="full-table-show">Manage</button>
+                                <ul>
+                                    {% for c in cols %}
+                                        {% for key in c %}
+                                            {% if key==t %}
+                                                <li>{{c[key]}}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endblock %}

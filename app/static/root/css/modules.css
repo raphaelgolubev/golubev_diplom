@@ -1,0 +1,21 @@
+/* Модуль стартовой позиции для эффекта появления fadeUp */
+.fadeUp-start-state {
+    transform: translateY(1.5rem);
+    opacity: 0;
+}
+/* Работает в связке с transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1); */
+.fadeEffect-support {
+    transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    will-change: opacity, transform;
+}
+
+/* Модули устанавливающие фоновое изображение */
+.bg-user {
+    background: url(../assets/user.png) center no-repeat;
+    background-size: cover;
+}
+
+.bg-upload {
+    background: url(../assets/upload.png) center no-repeat;
+    background-size: cover;
+}

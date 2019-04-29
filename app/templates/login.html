@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block DOC_TITLE %}
+Вход
+{% endblock %}
+
+{% block CUSTOM_HEAD %}
+<style>
+    .form-block {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+    }
+    a {
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block CONTENT %}
+   <div class="form-block fadeEffect-support fadeUp-start-state">
+       <h1>Sign In</h1>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.username.label }}<br>
+                {{ form.username(size=32) }}<br>
+                {% for error in form.username.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.password.label }}<br>
+                {{ form.password(size=32) }}<br>
+                {% for error in form.password.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+            <p>{{ form.submit() }}</p>
+        </form>
+        <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
+    </div>
+{% endblock %}

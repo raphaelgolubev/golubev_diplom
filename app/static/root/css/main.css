@@ -1,0 +1,14 @@
+html, body {
+    overflow: auto;
+    overflow-x: hidden;
+    font-family: AvenirNextRegular;
+}
+@font-face
+{
+    font-family: AvenirNextRegular; /* Гарнитура шрифта */
+    src: url(../fonts/AvenirNextCyr-Regular.ttf); /* Путь к файлу со шрифтом */
+}
+
+.start-slide {
+    position: absolute;
+}

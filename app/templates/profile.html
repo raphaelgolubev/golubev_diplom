@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+    {% block DOC_TITLE %}
+        {{ user.profile.username }}
+    {% endblock %}
+    {% block CUSTOM_HEAD %}
+        <style>
+            .profile-pic {
+                overflow: hidden;
+                position: relative;
+                margin-top: 3.6rem;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 50%;
+                width: 200px;
+                height: 200px;
+                background-color: #fff;
+                box-shadow: 0 -16px 46px rgba(255,255,255,0.35), 0 16px 46px rgba(255,255,255,0.3);
+            }
+            .profile-pic:hover .pic-actions-view {
+                opacity: 1;
+            }
+            .pic-actions-view {
+                opacity: 0;
+                display: flex;
+                cursor: pointer;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.65);
+                transition: opacity 0.3s ease;
+            }
+            .account-name {
+                color: rgba(255,255,255,0.7);
+                text-align: center;
+                font-size: 1.5em;
+                font-weight: bold;
+                font-stretch: normal;
+                font-variant: all-petite-caps;
+            }
+            .subname {
+                text-align: center;
+                font-size: 1em;
+                color: rgba(255,255,255,0.5);
+            }
+            .setting-name {
+                color: rgba(255,255,255,0.99);
+                margin-left: 3rem;
+                margin-bottom: 0;
+                font-size: 2.5em;
+                font-weight: bold;
+                font-stretch: normal;
+            }
+            .setting-subname {
+                cursor: pointer;
+                margin-left: 3rem;
+                font-size: 1em;
+                color: rgba(255,255,255,0.5);
+            }
+            li {
+                cursor: pointer;
+            }
+            li p {
+                pointer-events: none;
+            }
+            .pic-action {   
+                position: relative;
+                width: 50px;
+                height: 50px;
+                background-color: black;
+                margin: auto;
+            }
+            .pic-edit {
+                
+            }
+        </style>
+    {% endblock %}
+<!-- Содержание -->
+{% block CONTENT %}
+<div class="full-page start-slide fadeUp-start-state" style="display:grid; top:90px;" id='starter'>
+    <div class="bg-user profile-pic">
+        <div class="pic-actions-view">
+            <div class="pic-action pic-upload bg-upload">
+
+            </div>
+            <div class="pic-action pic-edit">
+
+            </div>
+            <div class="pic-action pic-delete">
+
+            </div>
+        </div>
+    </div>
+    <div style="position: relative; left: 50%; transform: translateX(-50%);">
+                <p class="account-name"> {{user.profile.username}} </p>
+                <p class="subname"> {{user.profile.lastseen}} </p>
+    </div>
+    <ul class="info-block content-container">
+        <li>
+            <p>Общие</p>
+        </li>
+        <li>
+            <p>Безопасность</p>
+        </li>
+        <li>
+            <p>Разработка (API)</p>
+        </li>
+        <li>
+            <p>Интерфейс</p>
+        </li>
+        <li>
+            <p>Плагин</p>
+        </li>
+        <li>
+            <p>Помощь</p>
+        </li>
+    </ul>
+</div>
+<div class="full-page start-slide fadeUp-start-state" style="display:grid; top:90px; " NoStartAnimation=''>
+    <p class="setting-name">Name</p>
+    <p class="setting-subname">Вернуться назад</p>
+</div>
+{% endblock %}

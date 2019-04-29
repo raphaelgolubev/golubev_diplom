@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+    {% block DOC_TITLE %}
+        Главная
+    {% endblock %}
+
+    {% block CUSTOM_HEAD %}
+        <style>
+            .circle {
+                position: absolute;
+                top: 50%; left: 50%;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+            }
+            .start-circle {
+                position: fixed;
+                cursor: pointer;
+                width: 100px; height: 100px;
+                background-color: #fff;
+                z-index: 1;
+                transform: translate(-50%, -50%);
+                transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) 1s;
+            }
+            .circ-medium {
+                width: 200px; height: 200px;
+                background-color: rgba(255,255,255, 0.5);
+                transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;
+            }
+            .circ-large {
+                width: 300px; height: 300px;
+                background-color: rgba(255,255,255, 0.25);
+                transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+            }
+            .circ-start-state {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            .stc-start-state {
+                pointer-events: none;
+                transform: translate(-50%, -50%) scale(40);
+            }
+
+            {% if current_user.is_authenticated %}
+                .grid-for-authorized {
+                    grid-template-areas: "aa aa aa"
+                                         "bb bb bb"
+                                         "mm mm mm";
+                }
+                .grid-item-top {
+                    grid-area: bb;
+                }
+                .circle {
+                    display: none;
+                }
+
+                .grid-item-top :first-child {
+                    color: rgb(255, 255, 255);
+                    font-weight: bold;
+                    font-size: 13vh;
+                    margin: auto;
+                    position: relative;
+                }
+                .grid-item-top :last-child {
+                    color: rgba(255, 255, 255, 0.85);
+                    font-weight: bold;
+                    font-size: 2.2vh;
+                    margin: auto;
+                    margin-top: 1rem;
+                    position: relative;
+                }
+                .grid-item-bottom :first-child {
+                    color: rgba(255,255,255, 0.75);
+                    margin-top: 0;
+                    top: calc(100% - 60px);
+                    position: sticky;
+                    margin-left: auto;
+                    font-weight: 600;
+                    /* width: 100%; */
+                    text-align: center;
+                }
+            {% endif %}
+        </style>
+    {% endblock %}
+            <!-- Кружочки -->
+            {% block CUSTOM_CODE %}
+                {% if current_user.is_authenticated %}
+                    <span class="circle start-circle" NoStartAnimation=""></span>
+                    <span class="circle circ-medium" NoStartAnimation=""></span>
+                    <span class="circle circ-large" NoStartAnimation=""></span>
+                {% else %}
+                    <span class="circle start-circle stc-start-state"></span>
+                    <span class="circle circ-medium circ-start-state"></span>
+                    <span class="circle circ-large circ-start-state"></span>
+                {% endif %}
+            {% endblock %}
+            <!-- Шапка -->
+
+            <!-- Содержание -->
+            {% block CONTENT %}
+                <div class="full-page start-slide test-grid grid-for-authorized" style="top:90px; height: calc(100% - 90px);" id="myblock">
+                    <div class="content-container grid-item-top fadeUp-start-state">
+                        {% if current_user.is_authenticated %}
+                            <p> Привет, {{current_user.username}} </p>
+                            <p> Не хочешь пройти краткий гайд? </p>
+                        {% else %}
+                            <p> 4ACM </p>
+                            <p> Ваш персональный помощник построения алгоритмов и управления кодом </p>
+                        {% endif %}
+                    </div>
+                    <div class="content-container grid-item-right fadeUp-start-state">
+                        <p></p>
+                    </div>
+                    <div class="content-container grid-item-bottom fadeUp-start-state">
+                        {% if current_user.is_authenticated %}
+                            <p> Я знаю, что не хочешь. Его здесь и нет. </p>
+                        {% else %}
+                            <p> Нажмите на центр кружка для крутой штуки, которую я не придумал </p>
+                        {% endif %}
+
+                    </div>
+                    <div class="content-container grid-item-left fadeUp-start-state">
+                        <p></p>
+                    </div>
+                </div>
+            {% endblock %}
