@@ -1,0 +1,4 @@
+.vscode/settings.json
+app/__pycache__/app.cpython-37.pyc
+app/__pycache__/config.cpython-37.pyc
+app/__pycache__/models.cpython-37.pyc
