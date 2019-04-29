@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config.from_object(Configuration)
 
+##Тут я протестировал GIT
+
 #Реализация авторизации
 from flask_login import LoginManager
 login = LoginManager(app)
