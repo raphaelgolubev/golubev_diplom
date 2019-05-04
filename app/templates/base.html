@@ -18,12 +18,81 @@
     <link rel="stylesheet" href="/static/root/css/modules.css">
     <script src="/static/root/js/main.js"></script>
 
+    <style>
+        .my-tip {
+            display: flex;
+            padding: 0 1rem;
+            align-items: center;
+            position: relative;
+            transform: scale(0.5);
+            width: auto;
+            margin-bottom: 1rem;
+            min-height: 70px;
+            opacity: 0;
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+            background-color: rgba(46, 47, 51, 0.56);
+        }
+
+        .fade-my-tip {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .my-tip p {
+            font-family: segoe UI;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .close-tip {
+            cursor: pointer;
+            min-width: 2vw;
+            min-height: 2vh;
+            /* float: left; */
+            margin: 0;
+            margin-left: auto;
+            filter: invert(0.5);
+        }
+
+        .user-messages-panel {
+            padding: 1rem;
+            display: grid;
+            position: absolute;
+            top: calc(80% - 10px);
+            left: 0;
+            height: 20%;
+            width: calc(100% / 3);
+            grid-template-rows: 90px;
+            z-index: 1;
+        }
+    </style>
+
+    <script>
+        setTimeout(showtip, 1000);
+        function showtip()
+        {
+            var tips = document.getElementsByClassName('my-tip');
+            for (var tip of tips)
+            {
+                tip.classList.add('fade-my-tip');
+                setTimeout(function() {
+                    tip.classList.remove('fade-my-tip');
+                }, 5000);
+            }
+        }
+        function hidetip(ev)
+        {
+            var tip = ev.srcElement.parentNode;
+            tip.classList.remove('fade-my-tip');
+        }
+    </script>
+
     {% block CUSTOM_HEAD %}
 
     {% endblock %}
 </head>
     <body>
-        <div class="test-box">
+        <div class="test-box {% block MAIN_CONTAINER_CLASS%} {% endblock %}" >
             <!-- some elements -->
             {% block CUSTOM_CODE %}
 
@@ -63,6 +132,21 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Сообщения пользователю -->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="user-messages-panel">
+                    {% for message in messages %}
+                        <div class="my-tip">
+                            <p> {{message}} </p>
+                            <div class="bg-close close-tip" onclick="hidetip(event)"></div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
             <!-- Содержание -->
             {% block CONTENT %}
 

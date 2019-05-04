@@ -28,7 +28,7 @@ def register():
         db.session.add(user_profile)
 
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash('Вы успешно зарегистрировались.')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -42,7 +42,7 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         #проверка пароля
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash('Неверное имя пользователя или пароль.')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')

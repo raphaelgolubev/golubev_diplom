@@ -40,6 +40,13 @@
                 font-size: 1em;
                 color: rgba(255,255,255,0.5);
             }
+            .logout {
+                text-align: center;
+            }
+            .logout a {
+                text-decoration: none;
+                color: #fff;
+            }
             .setting-name {
                 color: rgba(255,255,255,0.99);
                 margin-left: 3rem;
@@ -64,11 +71,8 @@
                 position: relative;
                 width: 50px;
                 height: 50px;
-                background-color: black;
                 margin: auto;
-            }
-            .pic-edit {
-                
+                transform: scale(0.7);
             }
         </style>
     {% endblock %}
@@ -91,6 +95,7 @@
     <div style="position: relative; left: 50%; transform: translateX(-50%);">
                 <p class="account-name"> {{user.profile.username}} </p>
                 <p class="subname"> {{user.profile.lastseen}} </p>
+                <p class="logout"> <a href="{{url_for('logout')}}">Выйти</a> </p>
     </div>
     <ul class="info-block content-container">
         <li>
@@ -113,7 +118,7 @@
         </li>
     </ul>
 </div>
-<div class="full-page start-slide fadeUp-start-state" style="display:grid; top:90px; " NoStartAnimation=''>
+<div class="full-page start-slide fadeUp-start-state" style="display:grid; top:90px; pointer-events: none;" NoStartAnimation=''>
     <p class="setting-name">Name</p>
     <p class="setting-subname">Вернуться назад</p>
 </div>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+        }
+        .my-tip {
+            display: flex;
+            padding: 0 1rem;
+            align-items: center;
+            position: relative;
+            transform: scale(0.5);
+            width: auto;
+            margin-bottom: 1rem;
+            min-height: 70px;
+            opacity: 0;
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+            background-color: blueviolet;
+        }
+        .fade-my-tip {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .my-tip p {
+            font-family: segoe UI;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .bg-close {
+            background: url(../static/root/assets/close.png) center no-repeat;
+            background-size: cover;
+            cursor: pointer;
+            min-width: 3vw;
+            min-height: 2vh;
+            /* float: left; */
+            margin: 0;
+            margin-left: auto;
+            filter: invert(0.8);
+        }
+        .user-messages-panel {
+            padding: 1rem;
+            display: grid;
+            position: absolute;
+            top: calc(50% - 10px);
+            left: 0;
+            height: 50%;
+            width: 50%;
+            background: antiquewhite;
+        }
+    </style>
+    <script>
+        function showtip()
+        {
+            var tips = document.getElementsByClassName('my-tip');
+            for (var tip of tips)
+            {
+                tip.classList.add('fade-my-tip');
+            }
+        }
+        function hidetip(ev)
+        {
+            var tip = ev.srcElement.parentNode;
+            console.log(tip);
+            tip.classList.remove('fade-my-tip');
+        }
+    </script>
+</head>
+    <body>
+        <div class="user-messages-panel">
+            <div class="my-tip">
+                <p> Hello, world! </p>
+                <div class="bg-close" onclick="hidetip(event)"></div>
+            </div>
+            <div class="my-tip fade-my-tip">
+                <p> Hello, world! </p>
+                <div class="bg-close" onclick="hidetip(event)"></div>
+            </div>
+            <div class="my-tip">
+                <p> Hello, world! </p>
+                <div class="bg-close" onclick="hidetip(event)"></div>
+            </div>
+            <div class="my-tip">
+                <p> Hello, world! </p>
+                <div class="bg-close" onclick="hidetip(event)"></div>
+            </div>
+        </div>
+       
+        <button onclick="showtip()"></button>
+    </body>
+</html>

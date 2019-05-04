@@ -125,7 +125,7 @@ window.onload = async function(evt) {
                 document.getElementsByClassName('test-box')[0].scrollTop = 0;
 
                 var settings_page = getElementsByAttribute('nostartanimation', 'full-page')[0];
-
+                settings_page.style.cssText += 'pointer-events: all;';
                 //название
                 var pagename = settings_page.children[0];
                 pagename.innerHTML = evt.srcElement.innerHTML;
@@ -137,6 +137,7 @@ window.onload = async function(evt) {
                     settings_page.addEventListener('transitionend', function after()
                     {
                         starter.classList.remove('fadeUp-start-state');
+                        settings_page.style.cssText += 'pointer-events: none;';
                         settings_page.removeEventListener('transitionend', after);
                     });
                     settings_page.classList.add('fadeUp-start-state');

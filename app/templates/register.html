@@ -6,10 +6,14 @@
 
 {% block CUSTOM_HEAD %}
 <style>
+    .test-box-flex {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     .form-block {
         position:absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
+        margin: auto;
         padding: 1rem;
         width: auto;
         height: auto;
@@ -21,37 +25,41 @@
 </style>
 {% endblock %}
 
+{% block MAIN_CONTAINER_CLASS%} 
+test-box-flex
+{% endblock %}
+
 {% block CONTENT %}
    <div class="form-block fadeEffect-support fadeUp-start-state">
-       <h1>Register</h1>
+       <h1>Регистрация</h1>
         <form action="" method="post">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.username.label }}<br>
                 {{ form.username(size=32) }}<br>
                 {% for error in form.username.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.email.label }}<br>
                 {{ form.email(size=64) }}<br>
                 {% for error in form.email.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.password.label }}<br>
                 {{ form.password(size=32) }}<br>
                 {% for error in form.password.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.password2.label }}<br>
                 {{ form.password2(size=32) }}<br>
                 {% for error in form.password2.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>{{ form.submit() }}</p>
