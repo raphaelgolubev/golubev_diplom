@@ -1,10 +1,12 @@
 # coding: utf8
 from app import db, login
+from app import app
+from time import time
+import jwt
 import sys, inspect
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from datetime import datetime
-
 #возвращает классы данного модуля
 def get_classes():
     return inspect.getmembers(sys.modules[__name__], inspect.isclass)
@@ -15,6 +17,7 @@ def get_class(name):
             return i[1]
         else:
             return 'none'
+
 
 @login.user_loader
 def load_user(id):
@@ -27,6 +30,21 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     # 1:1 Profile <-> User
     profile = db.relationship('Profile', backref='user_profile', uselist=False)
+    active = db.Column(db.Boolean())
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -39,7 +57,6 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User id:{}, username:{} >'.format(self.id, self.username)
-
 class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(255))
@@ -63,4 +80,5 @@ class Profile(db.Model):
         super(Profile, self).__init__(*args, **kwargs)
 
     def __repr__(self):
-        return '<Profile user_id:{}, user_name:{}, lastseen: {} >'.format(self.user_id, self.user_name, self.lastseen)
+        return '<Profile id:{}, username:{}, lastseen: {} >'.format(self.id, self.username, self.lastseen)
+

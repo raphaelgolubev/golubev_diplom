@@ -49,35 +49,54 @@ window.onload = async function(evt) {
         var test_box = document.getElementsByClassName('test-box')[0];
         var stc = document.getElementsByClassName('start-circle')[0];
         var scaling = (test_box.offsetWidth / stc.offsetWidth)+3;
+        //стартовая анимация кружочков
         if (!(stc.hasAttribute('NoStartAnimation')))
         {
             stc.style.cssText += 'transition: unset;';
             stc.style.cssText += 'transform: translate(-50%, -50%) scale(' + scaling + ');';
             stc.style.cssText += 'transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) 1s';
+            stc.addEventListener('transitionend', function after() 
+            {
+                var search_icon = stc.childNodes[0].nodeName == 'IMG' ? stc.childNodes[0] : stc.childNodes[1];
+                search_icon.style.cssText += 'opacity: 1;';
+                stc.removeEventListener('transitionend', after);
+            });
         }
+        //нажимаем на кружочек с иконкой поиска
+        stc.addEventListener('click', function searchshow() {
+            stc.style.cssText += 'transition: transform 0.5s ease';
+            circ_medium.style.cssText += 'transition: all 0.8s ease';
+            circ_large.style.cssText += 'transition: all 0.8s ease 0.2s';
 
-        var grid_right = document.getElementsByClassName('grid-item-right');
-        var grid_left = document.getElementsByClassName('grid-item-left');
+            circ_medium.classList.add('circ-start-state');
+            circ_large.classList.add('circ-start-state');
+            circ_large.addEventListener('transitionend', function after() 
+            {
+                var search_icon = stc.childNodes[0].nodeName == 'IMG' ? stc.childNodes[0] : stc.childNodes[1];
+                search_icon.style.cssText += 'opacity: 0;';
+                //создали строку поиска и задали scaleX(0)
+                var search_input = document.createElement('input');
+                search_input.type = 'text';
+                search_input.placeholder = 'Пример: шаблон html';
+                search_input.style.cssText += 'position: fixed; top: 50%; left: 50%; font-size: 150%; width: 75%;';
+                search_input.style.cssText += 'transform: translate(-50%,-50%) scaleX(0);' +
+                //задаем переход 
+                'transition: transform 0.5s ease;';
+                stc.parentElement.appendChild(search_input);
 
-        stc.addEventListener('click', function tutorstart() {
-            circ_medium.style.cssText += "transition: transform 0.75s cubic-bezier(0.09,-0.22, 0.99,-0.71);";
-            circ_large.style.cssText += "transition: transform 0.75s cubic-bezier(0.09,-0.22, 0.99,-0.71) 0.25s;";
+                search_icon.addEventListener('transitionend', function after_search_icon_hide() 
+                {
+                    //после того как иконка поиска исчезла
+                    //удаляем img с иконкой
+                    search_icon.parentElement.removeChild(search_icon);
+                    //убираем кружок
+                    stc.style.cssText += 'transform: translate(-50%, -50%) scale(0);';
+                    //задаем scaleX(1) для анимации
+                    search_input.style.cssText += 'transform: translate(-50%,-50%) scaleX(1);';
+                    search_icon.removeEventListener('transitionend', after_search_icon_hide);
+                });
 
-            for (var elem of fadeUp_elements) elem.classList.add('fadeUp-start-state');
-
-            fadeUp_elements[0].addEventListener('transitionend', function after() {
-                circ_medium.classList.add('circ-start-state');
-                circ_large.classList.add('circ-start-state');
-
-                circ_medium.addEventListener('transitionend', function after() {
-
-                    stc.style.cssText += "transition: border-radius 0.75s ease, transform 0.75s ease 1s;";
-                    stc.style.cssText += "border-radius: 0;";
-                    stc.style.cssText += "transform: translate(-500%, -300%) rotate(0deg);";
-                    circ_medium.removeEventListener('transitionend', after);
-                })
-
-                fadeUp_elements[0].removeEventListener('transitionend', after);
+                circ_large.removeEventListener('transitionend', after);
             });
         });
 
@@ -97,15 +116,16 @@ window.onload = async function(evt) {
         {
             stc.classList.remove('stc-start-state');
             stc.style.cssText = '';
-            stc.addEventListener('transitionend', function after() {
+            stc.addEventListener('transitionend', function after() 
+            {
                 for (var elem of fadeUp_elements)
                 {
                     elem.classList.remove('fadeUp-start-state');
                 }
-                fadeUp_elements[0].addEventListener('transitionend', function after() {
+                fadeUp_elements[0].addEventListener('transitionend', function after()
+                {
                     circ_medium.classList.remove('circ-start-state');
                     circ_large.classList.remove('circ-start-state');
-
                     fadeUp_elements[0].removeEventListener('transitionend', after);
 
                 });
@@ -119,25 +139,37 @@ window.onload = async function(evt) {
 
         if (document.querySelectorAll('.info-block')[0])
         {
-            var settings_list = document.querySelectorAll('.info-block')[0];
+            var setting_UL = document.querySelectorAll('.info-block')[0];
+            
             var func = function(evt)
             {
+                var current_settings_list = evt.srcElement.getAttribute('settings-list');
+                document.getElementById('settings-list-' + current_settings_list).style.cssText += 'display: block';
                 document.getElementsByClassName('test-box')[0].scrollTop = 0;
-
+                
                 var settings_page = getElementsByAttribute('nostartanimation', 'full-page')[0];
                 settings_page.style.cssText += 'pointer-events: all;';
                 //название
-                var pagename = settings_page.children[0];
+                var pagename = document.getElementsByClassName('setting-name')[0];
                 pagename.innerHTML = evt.srcElement.innerHTML;
 
                 //"вернуться назад"
-                var goback = settings_page.children[1];
+                var goback = document.getElementsByClassName('setting-subname')[0];
                 goback.addEventListener('click', function()
                 {
                     settings_page.addEventListener('transitionend', function after()
                     {
                         starter.classList.remove('fadeUp-start-state');
                         settings_page.style.cssText += 'pointer-events: none;';
+
+                        for(var child of settings_page.children)
+                        {
+                            if (child.id.includes('settings-list-'))
+                            {
+                                child.style.cssText += 'display: none';
+                            }
+                        }
+
                         settings_page.removeEventListener('transitionend', after);
                     });
                     settings_page.classList.add('fadeUp-start-state');
@@ -152,7 +184,7 @@ window.onload = async function(evt) {
                 });
                 starter.classList.add('fadeUp-start-state');
             }
-            for (var item of settings_list.children) item.addEventListener('click', func);
+            for (var item of setting_UL.children) item.addEventListener('click', func);
         }
     }
 }

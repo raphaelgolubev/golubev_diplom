@@ -7,7 +7,6 @@
     <title>Document</title>
     <style>
         body {
-            overflow: hidden;
             padding: 0;
             margin: 0;
         }
@@ -45,53 +44,87 @@
             filter: invert(0.8);
         }
         .user-messages-panel {
+            overflow: hidden;
             padding: 1rem;
-            display: grid;
             position: absolute;
             top: calc(50% - 10px);
             left: 0;
-            height: 50%;
+            min-height: 50%;
+            max-height: 50%;
             width: 50%;
             background: antiquewhite;
         }
+        .inner-message {
+            display: none;
+        }
     </style>
     <script>
-        function showtip()
-        {
-            var tips = document.getElementsByClassName('my-tip');
-            for (var tip of tips)
+        setTimeout(function() {
+            var messages = document.getElementsByClassName('inner-message');
+            var delay = 0.25;
+            for (var tip of messages) 
             {
-                tip.classList.add('fade-my-tip');
+                delay += 0.25;
+                addTip(tip.innerHTML, delay);
             }
-        }
+        }, 100);
         function hidetip(ev)
         {
             var tip = ev.srcElement.parentNode;
-            console.log(tip);
             tip.classList.remove('fade-my-tip');
+            tip.addEventListener('transitionend', function after()
+            {
+                tip.parentNode.removeChild(tip);
+                tip.removeEventListener('transitionend', after);
+            });
+        }
+        function addTip(message_text, delay=0.25)
+        {
+            var panel = document.getElementsByClassName('user-messages-panel')[0];
+            var mytip = document.createElement('li');
+            mytip.classList.add('my-tip');
+            mytip.style.cssText += 'transition: all ease 0.3s ' + delay + 's';
+            var message = document.createElement('p');
+            message.innerHTML = message_text;
+            var close = document.createElement('div');
+            close.classList.add('bg-close');
+            close.setAttribute('onclick','hidetip(event)')
+
+            mytip.appendChild(message);
+            mytip.appendChild(close);
+            panel.appendChild(mytip);
+            mytip.addEventListener('transitionend', function after() {
+                setTimeout(function () 
+                {
+                    mytip.classList.remove('fade-my-tip');
+                    mytip.addEventListener('transitionend', function delete_tip() {
+                        mytip.parentNode.removeChild(mytip);
+                        mytip.removeEventListener('transitionend', delete_tip);
+                    })
+                }, delay*10000);
+                mytip.removeEventListener('transitionend', after);
+            })
+            setTimeout(function () {
+                mytip.classList.add('fade-my-tip');
+            }, 100);
         }
     </script>
 </head>
     <body>
-        <div class="user-messages-panel">
-            <div class="my-tip">
-                <p> Hello, world! </p>
-                <div class="bg-close" onclick="hidetip(event)"></div>
-            </div>
-            <div class="my-tip fade-my-tip">
-                <p> Hello, world! </p>
-                <div class="bg-close" onclick="hidetip(event)"></div>
-            </div>
-            <div class="my-tip">
-                <p> Hello, world! </p>
-                <div class="bg-close" onclick="hidetip(event)"></div>
-            </div>
-            <div class="my-tip">
-                <p> Hello, world! </p>
-                <div class="bg-close" onclick="hidetip(event)"></div>
-            </div>
-        </div>
+        <p class="inner-message">1</p>
+        <p class="inner-message">2</p>
+        <p class="inner-message">3</p>
+        <p class="inner-message">4</p>
+        <p class="inner-message">5</p>
+        <p class="inner-message">6</p>
+        <p class="inner-message">7</p>
+        <p class="inner-message">8</p>
+
+        <ul class="user-messages-panel">
+
+        </ul>
        
-        <button onclick="showtip()"></button>
+        <button onclick="showtip()">Show Tips</button>
+        <button onclick="addTip('some text')">Add tip</button>
     </body>
 </html>

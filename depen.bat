@@ -1,1 +1,1 @@
-pip install flask flask_sqlalchemy flask_login flask_migrate flask_script flask_wtf
+pip install flask flask_sqlalchemy flask_login flask_migrate flask_script flask_wtf flask-security

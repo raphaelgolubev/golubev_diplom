@@ -1,5 +1,8 @@
 {
+    "vscode_custom_css.imports": [
+        "file:///C:/Users/Рафаэль/.vscode/extensions/robbowen.synthwave-vscode-0.0.7/synthwave84.css"
+        ],
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.pythonPath": "c:\\Users\\User\\Documents\\golubev_diplom\\env\\Scripts\\python.exe"
+    "python.pythonPath": "C:\\Users\\Рафаэль\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe"
 }

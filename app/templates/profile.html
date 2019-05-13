@@ -4,6 +4,16 @@
     {% endblock %}
     {% block CUSTOM_HEAD %}
         <style>
+            .upload-avatar {
+                display: none;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 300px; height: 300px;
+                background-color: #fff;
+                transform: translate(-50%, -50%);
+                z-index: 1;
+            }
             .profile-pic {
                 overflow: hidden;
                 position: relative;
@@ -16,16 +26,18 @@
                 background-color: #fff;
                 box-shadow: 0 -16px 46px rgba(255,255,255,0.35), 0 16px 46px rgba(255,255,255,0.3);
             }
-            .profile-pic:hover .pic-actions-view {
+            .pic-actions-view:hover {
                 opacity: 1;
             }
             .pic-actions-view {
+                position: absolute;
+                width: 100%;
                 opacity: 0;
                 display: flex;
                 cursor: pointer;
                 height: 100%;
                 background: rgba(0, 0, 0, 0.65);
-                transition: opacity 0.3s ease;
+                transition: all 0.3s ease;
             }
             .account-name {
                 color: rgba(255,255,255,0.7);
@@ -49,17 +61,12 @@
             }
             .setting-name {
                 color: rgba(255,255,255,0.99);
-                margin-left: 3rem;
-                margin-bottom: 0;
                 font-size: 2.5em;
                 font-weight: bold;
                 font-stretch: normal;
             }
             .setting-subname {
-                cursor: pointer;
-                margin-left: 3rem;
-                font-size: 1em;
-                color: rgba(255,255,255,0.5);
+                filter: invert(0.5); cursor: pointer;
             }
             li {
                 cursor: pointer;
@@ -74,15 +81,94 @@
                 margin: auto;
                 transform: scale(0.7);
             }
+            .toggle {
+                position: relative;
+                display: block;
+                width: 40px;
+                height: 20px;
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+                transform: translate3d(0, 0, 0);
+            }
+            .toggle span {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 20px;
+                height: 20px;
+                display: block;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 3px 8px rgba(154, 153, 153, 0.5);
+                transition: all 0.2s ease;
+            }
+            #cbx:checked + .toggle span {
+                background: #4F2EDC;
+                transform: translateX(20px);
+                transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
+                box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
+            }
+            #cbx:checked + .toggle:before {
+                background: #947ADA;
+            }
+            #cbx:checked + .toggle span:before {
+                transform: scale(1);
+                opacity: 0;
+                transition: all 0.4s ease;
+            }
+            .toggle:before {
+                content: "";
+                position: relative;
+                top: 3px;
+                left: 3px;
+                width: 34px;
+                height: 14px;
+                display: block;
+                background: #9A9999;
+                border-radius: 8px;
+                transition: background 0.2s ease;
+            }
+            .toggle span:before {
+                content: "";
+                position: absolute;
+                display: block;
+                margin: -18px;
+                width: 56px;
+                height: 56px;
+                background: rgba(79, 46, 220, 0.5);
+                border-radius: 50%;
+                transform: scale(0);
+                opacity: 1;
+                pointer-events: none;
+            }
         </style>
+        <script>
+            function ShowUploadAvatarDialog()
+            {
+                var wnd = document.getElementsByClassName('upload-avatar')[0];
+                wnd.style.cssText += 'display: block;';
+            }
+        </script>
     {% endblock %}
+
+    {% block CUSTOM_CODE %}
+        <div class="upload-avatar">
+            <form action="{{url_for('upload_file')}}" method="post" name="simple" enctype="multipart/form-data">
+                <input type="file" name="file" multiple="true" autocomplete="off" required>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    {% endblock %}
+
 <!-- Содержание -->
 {% block CONTENT %}
 <div class="full-page start-slide fadeUp-start-state" style="display:grid; top:90px;" id='starter'>
-    <div class="bg-user profile-pic">
+    <div class="profile-pic">
+        <img src="{{user.profile.photo}}" style="position: absolute;  width: 100%;
+        height: 100%;pointer-events: none; background-size: cover;">
         <div class="pic-actions-view">
-            <div class="pic-action pic-upload bg-upload">
-
+            <div class="pic-action pic-upload bg-upload" onclick="ShowUploadAvatarDialog()">
+                
             </div>
             <div class="pic-action pic-edit">
 
@@ -95,31 +181,173 @@
     <div style="position: relative; left: 50%; transform: translateX(-50%);">
                 <p class="account-name"> {{user.profile.username}} </p>
                 <p class="subname"> {{user.profile.lastseen}} </p>
-                <p class="logout"> <a href="{{url_for('logout')}}">Выйти</a> </p>
+                {% if current_user.profile.username == user.profile.username %}
+                    <p class="logout"> <a href="{{url_for('logout')}}">Выйти</a> </p>
+                {% endif %}
     </div>
-    <ul class="info-block content-container">
-        <li>
-            <p>Общие</p>
-        </li>
-        <li>
-            <p>Безопасность</p>
-        </li>
-        <li>
-            <p>Разработка (API)</p>
-        </li>
-        <li>
-            <p>Интерфейс</p>
-        </li>
-        <li>
-            <p>Плагин</p>
-        </li>
-        <li>
-            <p>Помощь</p>
-        </li>
-    </ul>
+    {% if current_user.profile.username == user.profile.username %}
+        <ul class="info-block content-container">
+            <li settings-list="1">
+                <p>Общие</p>
+            </li>
+            <li settings-list="2">
+                <p>Безопасность</p>
+            </li>
+            <li settings-list="3">
+                <p>Разработка (API)</p>
+            </li>
+            <li settings-list="4">
+                <p>Интерфейс</p>
+            </li>
+            <li settings-list="5">
+                <p>Плагин</p>
+            </li>
+            <li settings-list="6">
+                <p>Помощь</p>
+            </li>
+        </ul>
+    {% else %}
+        hi
+    {% endif %}
 </div>
 <div class="full-page start-slide fadeUp-start-state" style="display:grid; top:90px; pointer-events: none;" NoStartAnimation=''>
-    <p class="setting-name">Name</p>
-    <p class="setting-subname">Вернуться назад</p>
+    <div style = "display: flex;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 140px;">
+            <img src="../static/root/assets/arrow-left.png" class="setting-subname">
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; width: 140px;">
+            <p class="setting-name">Name</p>
+        </div>
+    </div>
+    
+    <!-- ОБЩИЕ -->
+    <div id="settings-list-1" style="display: none;position: relative;left: 50%;transform: translateX(-50%);width: 50%;">
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Основные </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Имя пользователя </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Электронная почта </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Место проживания </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Страна </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Город </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> О себе </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Интересы </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Проекты </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Языки программирования </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+    </div>
+    <!-- БЕЗОПАСНОСТЬ -->
+    <div id="settings-list-2" style="display: none;position: relative;left: 50%;transform: translateX(-50%);width: 50%;">
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Изменить пароль </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Текущий пароль </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Новый пароль </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+    </div>
+    <!-- API -->
+    <div id="settings-list-3" style="display: none;position: relative;left: 50%;transform: translateX(-50%);width: 50%;">
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Сгенерированный ключ </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> API-ключ </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+    </div>
+    <!-- ИНТЕРФЕЙС -->
+    <div id="settings-list-4" style="display: none;position: relative;left: 50%;transform: translateX(-50%);width: 50%;">
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Цветовая схема </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Цвет 1 </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Цвет 2 </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Шрифты </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Наименование </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Начертание </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Анимации </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Отключить анимации </p>
+            <input type="checkbox" id="cbx" style="display:none"/>
+            <label for="cbx" class="toggle" style="margin-left: auto;margin-top: 1rem;"><span></span></label>    
+        </div>
+    </div>
+    <!-- ПЛАГИН -->
+    <div id="settings-list-5" style="display: none;position: relative;left: 50%;transform: translateX(-50%);width: 50%;">
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Основные </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Имя пользователя </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Электронная почта </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Место проживания </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Страна </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Город </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> О себе </p>
+        <hr>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Интересы </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Проекты </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <p style="color:#fff;margin-left: 0rem;"> Языки программирования </p><input type="text"
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+    </div>
 </div>
 {% endblock %}
