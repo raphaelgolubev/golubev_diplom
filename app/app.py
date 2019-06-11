@@ -2,10 +2,13 @@
 from flask import Flask
 from config import Configuration
 from flask_sqlalchemy import SQLAlchemy
+from flask_moment import Moment
 
 #точко входа flask-приложения
 app = Flask(__name__)
 app.config.from_object(Configuration)
+#модуль для решения проблем со временем
+moment = Moment(app)
 
 #Реализация авторизации
 from flask_login import LoginManager
@@ -37,8 +40,9 @@ mail = Mail(app)
 from dev.blueprint import devel
 app.register_blueprint(devel, prefix_url='/dev')
 
-# последним шагом импортируется вьюха
-import view
+
+import view # последним шагом импортируется вьюха
+import ajax # и вьюха обрабатывающая запросы на сервер
 
 @app.shell_context_processor
 def make_shell_context():

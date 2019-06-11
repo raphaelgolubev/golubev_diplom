@@ -39,7 +39,52 @@ function getElementsByAttribute(attribute, classname = null, value = null)
     return matchingElements;
 }
 
+//проверяет, есть ли в списке классов элемента класс class_name
+function HasClass(element, class_name)
+{
+    if (element.className.includes(class_name))
+        return true;
+    else
+        return false;
+}
+
 window.onload = async function(evt) {
+    addEventListener('click', function(ev)
+    {
+        var sender = ev.srcElement;
+        if (HasClass(sender, 'like-img'))
+        {
+            sender.classList.add('like-img--active');
+        }
+    });
+    var inputs = document.getElementsByTagName('input');
+    for (input of inputs)
+    {
+        if (input.type == 'file')
+        {
+            var label	 = input.nextElementSibling,
+                labelVal = document.getElementById('avatar-p').innerHTML;
+    
+            input.addEventListener('change', function( e )
+            {
+                var fileName = '';
+                if( this.files && this.files.length > 1 )
+                    fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+                else
+                    fileName = e.target.value.split( "\/" ).pop();
+    
+                if( fileName )
+                {
+                    document.getElementById('avatar-p').innerHTML = 'Файл выбран';
+                    document.getElementById('avatar-span').innerHTML = fileName;
+                    document.getElementById('avatar-submit').style.cssText += 'display:block';
+                }
+                else
+                    document.getElementById('avatar-p').innerHTML = labelVal;
+            });   
+        }
+    }
+
     if (evt.target.title.toLowerCase().includes('главная'))
     {
         var fadeUp_elements = document.querySelectorAll('.fadeUp-start-state');

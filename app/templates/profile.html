@@ -1,18 +1,75 @@
 {% extends 'base.html' %}
     {% block DOC_TITLE %}
-        {{ user.profile.username }}
+        {{ user.profile.base_settings.username }}
     {% endblock %}
     {% block CUSTOM_HEAD %}
         <style>
+            .view-avatar {
+            display: flex;
+            overflow: hidden auto;
+            flex-direction: column;
+            position: fixed;
+            border-radius: 5px;
+            top: 50%;
+            left: 50%;
+            opacity: 0;
+            min-width: 300px;
+            min-height: 400px;
+            max-height: 80%;
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: -1;
+            background-color: rgb(27, 27, 27);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(255,255,255,0.12), 0 1px 2px rgba(255,255,255,0.24);
+            }
+            .dialog-window--fade {
+                opacity: 1;
+                z-index: 1;
+                transform: translate(-50%, -50%) scale(1);}
+            .dialog-header {
+                display: flex;
+                min-height: 50px;
+                width: 100%;}
+            .dialog-header-close {
+                cursor: pointer;
+                height: 50px;
+                width: 50px;
+                margin-left: auto;}
+            .dialog-header-close img {
+                filter: invert(1);
+                pointer-events: none;
+                position: relative;
+                width: 100%;
+                height: 100%;
+                transform: scale(0.5);}
+            .dialog-content {
+                margin: 1rem;
+                min-height: 50px;
+                width: 92%;}
+
             .upload-avatar {
                 display: none;
-                position: absolute;
+                flex-direction: column;
+                padding: 6rem;
+                position: fixed;
+                border-radius: 5px;
                 top: 50%;
                 left: 50%;
-                width: 300px; height: 300px;
-                background-color: #fff;
+                width: 300px; 
+                height: 400px;
                 transform: translate(-50%, -50%);
                 z-index: 1;
+                background-color: rgb(27, 27, 27);
+                box-shadow: 0 1px 3px rgba(255,255,255,0.12), 0 1px 2px rgba(255,255,255,0.24);
+            }
+            .upload-avatar p {
+                margin-bottom: auto;
+                font-size: 1.6em;
+                color: #fff;
+                font-weight: bold;
+            }
+            .upload-avatar button {
+                margin-top: auto;
             }
             .profile-pic {
                 overflow: hidden;
@@ -146,17 +203,48 @@
             function ShowUploadAvatarDialog()
             {
                 var wnd = document.getElementsByClassName('upload-avatar')[0];
-                wnd.style.cssText += 'display: block;';
+                wnd.style.cssText += 'display: flex;';
+            }
+            function HideUploadAvatarDialog()
+            {
+                var wnd = document.getElementsByClassName('upload-avatar')[0];
+                wnd.style.cssText += 'display: none;';
+            }
+            function ShowViewAvatarDialog()
+            {
+                var wnd = document.getElementsByClassName('view-avatar')[0];
+                wnd.classList.add('dialog-window--fade');
+            }
+            function HideViewAvatarDialog()
+            {
+                var wnd = document.getElementsByClassName('view-avatar')[0];
+                wnd.classList.remove('dialog-window--fade');
             }
         </script>
     {% endblock %}
 
     {% block CUSTOM_CODE %}
         <div class="upload-avatar">
+            <p>Загрузить изображение</p>
             <form action="{{url_for('upload_file')}}" method="post" name="simple" enctype="multipart/form-data">
-                <input type="file" name="file" multiple="true" autocomplete="off" required>
-                <input type="submit" value="Submit">
+                <input type="file" class="inputfile" id="avatar" name="avatar" style="width: 89%; margin-bottom: 1rem" multiple="true" autocomplete="off" required>
+                <label for="avatar">
+                    <p id='avatar-p'> Выберите файл </p>
+                    <span id='avatar-span'>  </span>
+                </label>
+                <input type="submit" id="avatar-submit" value="Загрузить" style="display:none; width: 100%">
             </form>
+            <button onclick="HideUploadAvatarDialog()">Отмена</button>
+        </div>
+        <div class="view-avatar">
+            <div class="dialog-header">
+                <div class="dialog-header-close" onclick="HideViewAvatarDialog()">
+                    <img src="../static/root/assets/close.png" >
+                </div>
+            </div>
+            <div class="dialog-content">
+                <img src="{{user.profile.photo}}">
+            </div>
         </div>
     {% endblock %}
 
@@ -166,26 +254,44 @@
     <div class="profile-pic">
         <img src="{{user.profile.photo}}" style="position: absolute;  width: 100%;
         height: 100%;pointer-events: none; background-size: cover;">
-        <div class="pic-actions-view">
-            <div class="pic-action pic-upload bg-upload" onclick="ShowUploadAvatarDialog()">
-                
-            </div>
-            <div class="pic-action pic-edit">
+        {% if current_user.profile.base_settings.username == user.profile.base_settings.username %}
+            <div class="pic-actions-view">
+                <div class="pic-action pic-upload bg-upload" onclick="ShowUploadAvatarDialog()">
+                    
+                </div>
+                <div class="pic-action pic-view bg-view" onclick="ShowViewAvatarDialog()">
+                    
+                </div>
+                <!--div class="pic-action pic-edit">
 
-            </div>
-            <div class="pic-action pic-delete">
+                </div>
+                <div class="pic-action pic-delete">
 
+                </div>-->
             </div>
-        </div>
+            {% else %}
+            <div class="pic-actions-view">
+                <div class="pic-action pic-view bg-view" onclick="ShowViewAvatarDialog()">
+                    
+                </div>
+            </div>
+        {% endif %}
     </div>
     <div style="position: relative; left: 50%; transform: translateX(-50%);">
-                <p class="account-name"> {{user.profile.username}} </p>
-                <p class="subname"> {{user.profile.lastseen}} </p>
-                {% if current_user.profile.username == user.profile.username %}
+                <p class="account-name"> {{user.profile.base_settings.username}} </p>
+                {% if user.profile.lastseen %}
+                    {% if user.profile.active == 'Не в сети' %}
+                        <p class="subname">Был(а) в сети  {{ moment(user.profile.lastseen).format('LLL') }}</p>
+                        <p class="subname">{{ moment(user.profile.lastseen).fromNow() }}</p>
+                    {% else %}
+                        <p class="subname">{{user.profile.active}}</p>
+                    {% endif %}
+                {% endif %}
+                {% if current_user.profile.base_settings.username == user.profile.base_settings.username %}
                     <p class="logout"> <a href="{{url_for('logout')}}">Выйти</a> </p>
                 {% endif %}
     </div>
-    {% if current_user.profile.username == user.profile.username %}
+    {% if current_user.profile.base_settings.username == user.profile.base_settings.username %}
         <ul class="info-block content-container">
             <li settings-list="1">
                 <p>Общие</p>
@@ -202,12 +308,50 @@
             <li settings-list="5">
                 <p>Плагин</p>
             </li>
-            <li settings-list="6">
-                <p>Помощь</p>
-            </li>
         </ul>
     {% else %}
-        hi
+        <ul class="info-block content-container">
+            <li>
+                <p>Страна</p>
+                {% if user.profile.base_settings.country %}
+                    <p>{{user.profile.base_settings.country}}</p>
+                {% else %}
+                    <p>Не указано</p>
+                {% endif%}
+            </li>
+            <li>
+                <p>Город</p>
+                {% if user.profile.base_settings.city %}
+                    <p>{{user.profile.base_settings.city}}</p>
+                {% else %}
+                    <p>Не указано</p>
+                {% endif%}
+            </li>
+            <li>
+                <p>Контакты</p>
+                {% if user.profile.base_settings.contact%}
+                    <p>{{user.profile.base_settings.contact}}</p>
+                {% else %}
+                    <p>Не указано</p>
+                {% endif%}
+            </li>
+            <li>
+                <p>Портфолио</p>
+                {% if user.profile.base_settings.projects %}
+                    <p>{{user.profile.base_settings.projects}}</p>
+                {% else %}
+                    <p>Не указано</p>
+                {% endif%}
+            </li>
+            <li>
+                <p>Языки программирования</p>
+                {% if user.profile.base_settings.programming_langs %}
+                    <p>{{user.profile.base_settings.programming_langs}}</p>
+                {% else %}
+                    <p>Не указано</p>
+                {% endif%}
+            </li>
+        </ul>
     {% endif %}
 </div>
 <div class="full-page start-slide fadeUp-start-state" style="display:grid; top:90px; pointer-events: none;" NoStartAnimation=''>
@@ -215,7 +359,7 @@
         <div style="display: flex; align-items: center; justify-content: center; width: 140px;">
             <img src="../static/root/assets/arrow-left.png" class="setting-subname">
         </div>
-        <div style="display: flex; align-items: center; justify-content: center; width: 140px;">
+        <div style="display: flex; align-items: center;">
             <p class="setting-name">Name</p>
         </div>
     </div>
@@ -225,37 +369,70 @@
         <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Основные </p>
         <hr>
         <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Имя пользователя </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+            <p style="color:#fff;margin-left: 0rem;"> Имя пользователя </p>
+            <input  type="text" 
+                    value="{{user.profile.base_settings.username}}"
+                    name="username-set" 
+                    placeholder="xXx_6a6ka_B_KeDax_xXx"
+                    style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
         </div>
         <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Электронная почта </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+            <p style="color:#fff;margin-left: 0rem;"> Электронная почта </p>
+            <input  type="text"
+                    value="{{user.email}}"
+                    name="email-set"
+                    placeholder="}{oTa6bI4@privet_iz_2007.org"
+                    style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
         </div>
         <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Место проживания </p>
         <hr>
         <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Страна </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+            <p style="color:#fff;margin-left: 0rem;"> Страна </p>
+            <input  type="text"
+            {% if user.profile.base_settings.country %} value="{{user.profile.base_settings.country}}" {% endif %}
+                    name="country-set"
+                    placeholder="Немеция"
+                    style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
         </div>
         <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Город </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+            <p style="color:#fff;margin-left: 0rem;"> Город </p>
+            <input  type="text"
+            {% if user.profile.base_settings.city %} value="{{user.profile.base_settings.city}}" {% endif %}
+                    name="city-set"
+                    placeholder="Нижний-Германск"
+                    style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
         </div>
 
         <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> О себе </p>
         <hr>
         <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Интересы </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+            <p style="color:#fff;margin-left: 0rem;"> Связь с Вами (соц. сеть, почта) </p>
+            <input  type="text"
+            {% if user.profile.base_settings.contact %} value="{{user.profile.base_settings.contact}}" {% endif %}
+                    name="contact-set"
+                    placeholder="vk.com/id1"
+                    style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
         </div>
         <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Проекты </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+            <p style="color:#fff;margin-left: 0rem;"> Портфолио </p>
+            <input  type="text"
+            {% if user.profile.base_settings.projects %} value="{{user.profile.base_settings.projects}}" {% endif %}
+                    name="projects-set"
+                    placeholder="LinkedIn, GitHub или свой домен"
+                    style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
         </div>
         <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Языки программирования </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+            <p style="color:#fff;margin-left: 0rem;"> Языки программирования </p>
+            <input  type="text"
+            {% if user.profile.base_settings.programming_langs %} 
+                    value="{{user.profile.base_settings.programming_langs}}" 
+            {% endif %}
+                    name="programLangs-set"
+                    placeholder="хтмл :)"
+                    style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <button id="push-base-settings" style="margin-left: auto">Сохранить</button>
         </div>
     </div>
     <!-- БЕЗОПАСНОСТЬ -->
@@ -270,6 +447,9 @@
             <p style="color:#fff;margin-left: 0rem;"> Новый пароль </p><input type="text"
                 style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
         </div>
+        <div style="display: flex;">
+            <button style="margin-left: auto">Сохранить</button>
+        </div>
     </div>
     <!-- API -->
     <div id="settings-list-3" style="display: none;position: relative;left: 50%;transform: translateX(-50%);width: 50%;">
@@ -278,6 +458,9 @@
         <div style="display: flex;">
             <p style="color:#fff;margin-left: 0rem;"> API-ключ </p><input type="text"
                 style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+        <div style="display: flex;">
+            <button style="margin-left: auto">Сгенерировать новый</button>
         </div>
     </div>
     <!-- ИНТЕРФЕЙС -->
@@ -309,6 +492,9 @@
             <p style="color:#fff;margin-left: 0rem;"> Отключить анимации </p>
             <input type="checkbox" id="cbx" style="display:none"/>
             <label for="cbx" class="toggle" style="margin-left: auto;margin-top: 1rem;"><span></span></label>    
+        </div>
+        <div style="display: flex;">
+            <button style="margin-left: auto">Сохранить</button>
         </div>
     </div>
     <!-- ПЛАГИН -->

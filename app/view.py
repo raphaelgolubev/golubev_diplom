@@ -1,15 +1,56 @@
 from app import app, db
 import os
 from email_work import send_password_reset_email
-from forms import LoginForm, MainSettingsForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
-from models import User, Profile
+from forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
+from models import User, Profile, BaseSettings, CodeTemplate
 from flask_login import current_user, login_user, logout_user,login_required
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, abort
 from werkzeug.urls import url_parse
+from functools import wraps
+from datetime import datetime
+
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.profile.active = 'Онлайн'
+        current_user.profile.lastseen = datetime.utcnow()
+        db.session.commit()
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            if current_user.role != 'admin':
+                abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.errorhandler(403)
+def forbidden_403(exception):
+    return render_template('forbidden.html')
 
 @app.route('/')
 def main():
     return render_template('index.html')
+
+@app.route('/library')
+def library():
+    templs = CodeTemplate.query.all()
+    return render_template('library.html', templates=templs)
+
+@app.route('/library/<id>')
+def template_page(id):
+    id = int(id)
+    templs = CodeTemplate.query.all()
+    for templ in templs:
+        if templ.id == id:
+            return render_template('template_page.html', templ=templ)
+    abort(404)
+
+@app.route('/my_templates')
+@login_required
+def my_templates():
+    return render_template('my-templates.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -18,16 +59,22 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         #создаем юзера
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(user_login=form.user_login.data, email=form.email.data)
         #задаем пароль с помощью функции хэширования
         user.set_password(form.password.data)
-        #создаем профиль
-        user_profile = Profile(username=form.username.data)
+        #создаем профиль для подачи в них основных данных
+        user_profile = Profile()
+        #теперь создаем БАЗОВЫЕ настройки создаваемого юзера
+        profile_base = BaseSettings(username=form.username.data)
+        
         #связываем модели
+        #BaseSettings --ЗАСУНУЛИ В--> Profile
+        user_profile.base_settings = profile_base
+        #Profile --ЗАСУНУЛИ В--> User
         user.profile = user_profile
+        #Всё это скомпановано в объект user, добавляем его в сессию
         db.session.add(user)
-        db.session.add(user_profile)
-
+        #Сохраняем изменения
         db.session.commit()
         flash('Вы успешно зарегистрировались.')
         return redirect(url_for('login'))
@@ -42,7 +89,7 @@ def login():
     else:
         form = LoginForm()
         if form.validate_on_submit():
-            user = User.query.filter_by(username=form.username.data).first()
+            user = User.query.filter_by(user_login=form.user_login.data).first()
             #проверка пароля
             if user is None or not user.check_password(form.password.data):
                 flash('Неверное имя пользователя или пароль.')
@@ -52,8 +99,9 @@ def login():
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('main')
+
             return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', form=form)
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
@@ -64,7 +112,7 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
+        flash('Проверьте адрес электронной почты на корректность для отправки пароля.')
         return redirect(url_for('login'))
     return render_template('reset_password_request.html',
                            title='Reset Password', form=form)
@@ -80,22 +128,28 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset.')
+        flash('Ваш пароль был изменён.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
 
 @app.route('/logout')
-def logout():
-    logout_user()
-    flash('Вы вышли из аккаунта.')
-    return redirect(url_for('main'))
+def logout():   
+    if current_user.is_authenticated: 
+        current_user.profile.active = 'Не в сети'
+        db.session.commit()
+        logout_user()
+        return redirect(url_for('main'))
+    return 'hi'
 
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    form = MainSettingsForm()
-    user = User.query.filter_by(username=username).first_or_404()
-    return render_template('profile.html', user=user, form=form)
+    users = User.query.all()
+    for user in users:
+        if (user.profile.base_settings.username):
+            if (user.profile.base_settings.username == username):
+                return render_template('profile.html', user=user)
+    abort(404)
 
 from config import Configuration
 def allowed_file(filename):
@@ -107,10 +161,10 @@ from werkzeug.utils import secure_filename
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
+        if 'avatar' not in request.files:
+            flash('No file part: {}'.format(request.files))
             return redirect(request.url)
-        file = request.files['file']
+        file = request.files['avatar']
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
@@ -121,6 +175,6 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             current_user.profile.photo = '..' + os.path.join(app.config['FOLDER_POSTFIX'], filename)
             db.session.commit();
-            return redirect(url_for('user', username=current_user.username))
+            return redirect(url_for('user', username=current_user.profile.base_settings.username))
 
     

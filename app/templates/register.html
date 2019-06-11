@@ -8,12 +8,12 @@
 <style>
     .test-box-flex {
         display: flex;
-        align-items: center;
-        justify-content: center;
     }
     .form-block {
         position:absolute;
         margin: auto;
+        margin-top: 10rem;
+        max-width: 35%;
         padding: 1rem;
         width: auto;
         height: auto;
@@ -32,8 +32,16 @@ test-box-flex
 {% block CONTENT %}
    <div class="form-block fadeEffect-support fadeUp-start-state">
        <h1>Регистрация</h1>
+       <h2>Примечание: Ваш логин не должно превышать лимит в 10 символов</h2>
         <form action="" method="post">
             {{ form.hidden_tag() }}
+            <p>
+                {{ form.user_login.label }}<br>
+                {{ form.user_login(size=10) }}<br>
+                {% for error in form.user_login.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </p>
             <p>
                 {{ form.username.label }}<br>
                 {{ form.username(size=32) }}<br>

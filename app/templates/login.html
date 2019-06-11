@@ -16,6 +16,9 @@
         margin: auto;
         color: #fff;
     }
+    .form-block input {
+        margin-left: 0;
+    }
     a {
         color: rgba(255, 255, 255, 0.5);
         text-decoration: none;
@@ -33,9 +36,9 @@ test-box-flex
         <form action="" method="post">
             {{ form.hidden_tag() }}
             <p>
-                {{ form.username.label }}<br>
-                {{ form.username(size=32) }}<br>
-                {% for error in form.username.errors %}
+                {{ form.user_login.label }}<br>
+                {{ form.user_login(size=32) }}<br>
+                {% for error in form.user_login.errors %}
                 <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>

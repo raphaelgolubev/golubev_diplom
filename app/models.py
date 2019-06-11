@@ -7,6 +7,7 @@ import sys, inspect
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from datetime import datetime
+
 #возвращает классы данного модуля
 def get_classes():
     return inspect.getmembers(sys.modules[__name__], inspect.isclass)
@@ -18,19 +19,18 @@ def get_class(name):
         else:
             return 'none'
 
-
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(64), index=True, unique=True)
+    user_login = db.Column(db.String(10), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     # 1:1 Profile <-> User
     profile = db.relationship('Profile', backref='user_profile', uselist=False)
-    active = db.Column(db.Boolean())
+    role = db.Column(db.String(120), default='User')
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
@@ -56,23 +56,17 @@ class User(UserMixin, db.Model):
         super(User, self).__init__(*args, **kwargs)
 
     def __repr__(self):
-        return '<User id:{}, username:{} >'.format(self.id, self.username)
+        return '<User id:{}, user_login:{} >'.format(self.id, self.user_login)
 class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(255))
+    active = db.Column(db.String(32))
     photo = db.Column(db.String(255))
-    language = db.Column(db.String(255))
-    scope = db.Column(db.String(255))
-    about = db.Column(db.String(255))
-    country = db.Column(db.String(255))
-    city = db.Column(db.String(255))
     lastseen = db.Column(db.DateTime, default=datetime.utcnow)
-    activity = db.Column(db.Boolean)
-    projects = db.Column(db.String(255))
-    algorithms = db.Column(db.String(255))
-    templates = db.Column(db.String(255))
     # 1:1 Profile <-> User
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
+    # 1:1 Profile <-> BaseSettings
+    base_settings = db.relationship('BaseSettings', backref='profile_baseSettings', uselist=False)
+    templates = db.relationship('CodeTemplate', backref='profile_templates')
 
     # *args - список неявно указанных аргументов
     # **kwargs - Key Words Args - именованные аргументы
@@ -80,5 +74,37 @@ class Profile(db.Model):
         super(Profile, self).__init__(*args, **kwargs)
 
     def __repr__(self):
-        return '<Profile id:{}, username:{}, lastseen: {} >'.format(self.id, self.username, self.lastseen)
+        return '<Profile id:{}, lastseen:{} >'.format(self.id, self.lastseen)
+class BaseSettings(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(255), index=True, unique=True)
+    country = db.Column(db.String(255))
+    city = db.Column(db.String(255))
+    contact = db.Column(db.String(255))
+    projects = db.Column(db.String(255))
+    programming_langs = db.Column(db.String(255))
+    profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), unique=True)
+
+    # *args - список неявно указанных аргументов
+    # **kwargs - Key Words Args - именованные аргументы
+    def __init__(self, *args, **kwargs):
+        super(BaseSettings, self).__init__(*args, **kwargs)
+
+    def __repr__(self):
+        return '<BaseSettings id:{}>'.format(self.id)
+
+class CodeTemplate(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255))
+    tags = db.Column(db.String(255))
+    lang = db.Column(db.String(140))
+    short_name = db.Column(db.String(64))
+    code = db.Column(db.Text)
+    profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'))
+
+    def __init__(self, *args, **kwargs):
+        super(CodeTemplate, self).__init__(*args, **kwargs)
+
+    def __repr__(self):
+        return '<CodeTemplate id:{}, name:{}>'.format(self.id, self.name)
 

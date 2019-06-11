@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block DOC_TITLE %}
+Мои шаблоны
+{% endblock %}
+
+{% block CUSTOM_HEAD %}
+<script src="../static/root/js/rainbow-custom.min.js"></script>
+<link rel="stylesheet" href="../static/root/css/kimbie-dark.css">
+{% endblock %}
+
+{% block CONTENT %}
+<div class="full-page start-slide fadeUp-start-state" style="display: flex; top:90px; margin-bottom: 5rem;">
+    <div id="add-code-templ-container" style="display:flex; margin-top: 3rem; flex-direction:column; position:relative; left:50%; transform:translateX(-50%); width:50%;">
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem; font-size: 1.2em;"> Добавление фрагмента кода </p>
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem; font-size: 1em;"> 
+            Заполните форму ниже и нажмите кнопку "Выполнить", чтобы <br>
+            добавить фрагмент кода в Ваш профиль и иметь возможность <br>
+            использовать его на любой машине, на которой установлен <br>
+            Visual Studio Code и плагин 4ACM 
+        </p>
+        <div style="display: flex;">
+            <div style="min-width: 290px; margin-right: 3rem; max-width: 290px;">
+                <p style="color:#fff;margin-left: 0rem;"> Название </p>
+                <p style="color:rgba(255,255,255,0.5);margin-left: 0rem; font-size: 0.8em;"> 
+                    Полное название Вашего фрагмента кода
+                </p>
+            </div>
+            <input type="text" name="templ-name" style="width: 300px; margin-left: auto; margin-bottom: 2rem;">
+        </div>
+
+        <div style="display: flex;">
+            <div style="min-width: 290px; margin-right: 3rem; max-width: 290px;">
+                <p style="color:#fff;margin-left: 0rem;"> Тэги (через запятую) </p>
+                <p style="color:rgba(255,255,255,0.5);margin-left: 0rem; font-size: 0.8em;"> 
+                    Перечислите в тэгах метки, которые облегчат поиск. Лучше 
+                    использовать название используемого фреймворка, 
+                    описание кода одним словом и т.д. 
+                </p>
+            </div>
+            <input type="text" name="templ-tags" style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+
+        <div style="display: flex;">
+            <div style="min-width: 290px; margin-right: 3rem; max-width: 290px;">
+                <p style="color:#fff;margin-left: 0rem;"> Язык </p>
+                <p style="color:rgba(255,255,255,0.5);margin-left: 0rem; font-size: 0.8em;"> 
+                    Укажите язык, на котором написан данный фрагмент. Это необязательно
+                    может быть языком программирования, можно добавлять языки разметки (HTML) или 
+                    формата данных (JSON) и т.д.
+                </p>
+            </div>
+            <div class="select-container" style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+                <select name="templ-lang">
+                    <option selected>Python</option>
+                    <option>C#</option>
+                    <option>Visual Basic</option>
+                    <option>SQL</option>
+                    <option>Ruby</option>
+                    <option>Php</option>
+                    <option>Pascal</option>
+                    <option>HTML</option>
+                    <option>CSS</option>
+                    <option>JSON</option>
+                    <option>XML</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display: flex;">
+            <div style="min-width: 290px; margin-right: 3rem; max-width: 290px;">
+                <p style="color:#fff;margin-left: 0rem;"> Синоним </p>
+                <p style="color:rgba(255,255,255,0.5);margin-left: 0rem; font-size: 0.8em;"> 
+                    Это одно слово или фраза, при вводе которого будет вызываться данный фрагмент кода. 
+                    Например, фрагмент "Базовая модель таблицы базы данных SQLAlchemy" имеет слишком 
+                    длинное название, поэтому целесообразно установить слово/фразу, которое будет 
+                    соответствовать этому фрагменту - "модель таблицы"
+                </p>
+            </div>
+            <input type="text" name="templ-shortname" style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+        </div>
+
+        <div style="display: flex; flex-direction: column;">
+            <div style="min-width: 290px; margin-right: 3rem; max-width: 290px;">
+                <p style="color:#fff;margin-left: 0rem;"> Фрагмент </p>
+                <p style="color:rgba(255,255,255,0.5);margin-left: 0rem; font-size: 0.8em;"> 
+                    Вставьте фрагмент кода в данное поле
+                </p>
+            </div>
+            <textarea cols="30" rows="10" name="templ-code"
+            style="width: 94%;
+            height: 300px;
+            margin: auto;
+            margin-bottom: 2rem;"></textarea>
+        </div>
+        
+        <div style="display: flex;">
+            <button id="add-code-template" style="margin-left: auto">Добавить</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

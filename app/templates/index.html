@@ -108,8 +108,8 @@
                 <div class="full-page start-slide test-grid grid-for-authorized" style="top:90px; height: calc(100% - 90px);" id="myblock">
                     <div class="content-container grid-item-top fadeUp-start-state">
                         {% if current_user.is_authenticated %}
-                            <p> Привет, {{current_user.username}} </p>
-                            <p> Не хочешь пройти краткий гайд? </p>
+                            <p> Привет, {{current_user.profile.base_settings.username}} </p>
+                            <p> Как твоё ничего? </p>
                         {% else %}
                             <p> 4ACM </p>
                             <p> Ваш персональный помощник построения алгоритмов и управления кодом </p>
@@ -120,11 +120,16 @@
                     </div>
                     <div class="content-container grid-item-bottom fadeUp-start-state">
                         {% if current_user.is_authenticated %}
-                            <p> Я знаю, что не хочешь. Его здесь и нет. </p>
+                            <p> Работу выполнил студент 4-го курса группы ИС1-15 <br> 
+                                Голубев Рафаэль Равилевич
+                            </p>
                         {% else %}
-                            <p> Если хотите быстро что-то найти просто нажмите на иконку поиска! </p>
+                            <p style="pointer-events: none;"> 
+                                Если хотите быстро что-то найти просто нажмите на иконку поиска! 
+                            </p>
                         {% endif %}
-
+                        <p style="cursor: pointer; font-size: 1.1em">О проекте</p>
+                        <p style="cursor: pointer; font-size: 1.1em">Быстрый старт</p>
                     </div>
                     <div class="content-container grid-item-left fadeUp-start-state">
                         <p></p>

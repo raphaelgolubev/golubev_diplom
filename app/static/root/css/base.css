@@ -1,32 +1,26 @@
 /* Общий контейнер */
-.test-box {
-    scroll-behavior: smooth;
-    overflow: auto;
-    overflow-x: hidden;
-    position: absolute;
-    top:0; left: 0;
-    /*top: 50%; left:50%; transform: translate(-50%, -50%) scale(0.8);*/
-    width: 100%; height: 100%;
-    background-color: #202124;
-}
+.test-box   {   scroll-behavior: smooth;
+                overflow: auto;
+                overflow-x: hidden;
+                position: absolute;
+                top:0; left: 0;
+                /*top: 50%; left:50%; transform: translate(-50%, -50%) scale(0.8);*/
+                width: 100%; height: 100%;
+                background-color: #202124;  }
 /* Шапка */
-.head-line {
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    min-height: 90px;
-    transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
-    will-change: opacity, transform;
-}
+.head-line  {   padding: 0;
+                margin: 0;
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%;
+                min-height: 90px;
+                transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+                will-change: opacity, transform;    }
 /* Слайд контента */
-.full-page {
-    overflow: hidden;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: auto;
-    transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
-    will-change: opacity, transform;
-}
+.full-page  {   overflow: hidden;
+                position: absolute;
+                left: 0;
+                width: 100%;
+                height: auto;
+                transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+                will-change: opacity, transform;    }

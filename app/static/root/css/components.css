@@ -1,34 +1,73 @@
 /* Элемент шапки */
-.header-block {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 90px; height: 90px;
-    margin-right:1px;
-    transition: background-color 0.2s ease;
-}
-.header-block:hover{
-    background-color: rgba(0,0,0,0.25);
-}
-.header-block :first-child {
-    font-weight: 700;
-    color: #fff;
-}
+.header-block               {   cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                position: relative;
+                                width: 90px; height: 90px;
+                                margin-right:1px;
+                                transition: background-color 0.2s ease; }
+.header-block:hover         {   background-color: rgba(0,0,0,0.25); }
+.header-block :first-child  {   font-weight: 700;color: #fff;   }
 
-hr {
-    border: none;
-    color: rgba(255,255,255,0.2);
-    background-color: rgba(255,255,255,0.2);
-    height: 2px;
-}
-
+hr                          {   border: none; color: rgba(255,255,255,0.2);
+                                background-color: rgba(255,255,255,0.2);
+                                height: 2px; }
 /* inputs */
-input[type="text"], input[type="password"] {
-    border: none;
-    border-radius: 5px;
-    padding: 1rem;
-    outline: none;
-}
+input[type="text"], 
+input[type="password"], 
+textarea, 
+.select-container           {   border: 1px rgba(255,255,255,0.2) ridge;
+                                color: rgba(255,255,255,0.8);
+                                border-radius: 5px;
+                                padding: 1rem;
+                                margin: 1rem;
+                                outline: none;
+                                max-height: 16px;
+                                background: rgba(0,0,0,0.1);  }
+.select-container           {   display: flex;         }
+select                      {   background: transparent;
+                                padding: 0;
+                                color: #fff;
+                                border: 0;
+                                width: 100%;
+                                outline: none;        }
+select option               {   background: rgba(0, 0, 0, 0.829);   }
+textarea                    {   max-height: unset;    }
 
+button,
+input[type="submit"],
+input[type="file"]          {   cursor: pointer;
+                                outline: none;
+                                color: #fff;
+                                padding: 1rem;
+                                border-radius: 5px;
+                                border: none;
+                                background-color: rgba(0,0,0,0.1);
+                                transition: background 0.3s ease;   }
+input[type="file"]          {
+                                width: 0.1px;
+                                height: 0.1px;
+                                opacity: 0;
+                                overflow: hidden;
+                                position: absolute;
+                                z-index: -1;    }
+input[type="file"] + label {
+                                cursor: pointer;
+                                font-size: 1.25em;
+                                font-weight: 700;
+                                color: rgba(255,255,255, 0.5);
+                                display: inline-block;
+                                margin: auto;
+                                margin-bottom: 5rem; }
+input[type="file"]:focus + 
+label,
+input[type="file"] + 
+label:hover                 {   color: #fff;  }
+
+button:hover,
+input[type="submit"]:hover,
+input[type="file"]:hover    {   background-color: rgba(255, 255, 255, 0.342);   }
+button:active,
+input[type="submit"]:active,
+input[type="file"]:active   {   background-color: rgba(255, 255, 255, 0.6); }

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block DOC_TITLE %}
+Лента
+{% endblock %}
+{% block CUSTOM_HEAD %}
+<script src="../static/root/js/rainbow-custom.min.js"></script>
+<link rel="stylesheet" href="../static/root/css/kimbie-dark.css">
+<style>
+    .like-img {
+        filter: saturate(50%);
+        max-width: 32px;    
+        max-height: 32px;
+        margin: auto;
+        transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    .like-img:hover {
+        filter: saturate(200%);
+    }
+    .like-img:active {
+        transform: scale(0.4);
+    }
+    .like-img--active {
+        filter: saturate(200%);
+    }
+    .table-card {
+        display: flex;
+        text-transform: uppercase;
+        overflow: auto;
+        overflow-x: hidden;
+        background-color: rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        margin: auto;
+        margin-top: 2rem;
+        display: inline-flex;
+        min-width: 100%;
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(255,255,255,0.12), 0 1px 2px rgba(255,255,255,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+    .table-card:hover {
+        box-shadow: 0 14px 28px rgba(255,255,255,0.25), 0 10px 10px rgba(255,255,255,0.22);
+    }
+    .table-card-name {
+        font-weight: 700;
+    }
+    .table-card-subname {
+        font-weight: 100;
+        font-size: 0.9em;
+    }
+    .table-card div {
+        position: relative;
+        width: 100%;
+    }
+    .table-card div .card-header {
+        display: flex;
+    }
+    .table-card button {
+        cursor: pointer;
+        margin: 1rem;
+        outline: none;
+        color: rgba(255, 255, 255, 0.75);
+        background: transparent;
+        border: 2px;
+        border-style: ridge;
+        border-color: rgba(255, 255, 255, 0.2);
+        padding: 1rem;
+    }
+    .table-card button:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    .table-card div p, .table-card div a {
+        margin-left: 1rem;
+        color: rgba(255, 255, 255, 0.75);
+    }
+    .table-card div ul {
+        list-style: none;
+        padding: 0;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .table-card div ul li {
+        display: flex;
+        overflow: hidden auto;
+        min-height: 25px;
+        max-height: 300px;
+        margin-top: 1rem;
+        border: 2px;
+        border-style: ridge;
+        border-color: rgba(255, 255, 255, 0.2);
+        padding: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1.5vh;
+    }
+    .table-card div ul li div {
+        width: auto;
+    }
+    .table-card div ul li div :first-child {
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
+{% block CONTENT %}
+<div class="full-page start-slide fadeUp-start-state" style="display: flex; top:90px;">
+    <div style=" overflow: hidden; width: 50%;
+    padding: 0 2rem 2rem 2rem; margin: auto; margin-bottom: 3rem; display: flex; flex-direction: column">
+        {% for templ in templates %}
+        <div class="table-card">
+            <div>
+                <div class="card-header">
+                    <div>
+                        <p class="table-card-name">{{templ.name}}</p>
+                        <p class="table-card-subname">{{templ.tags}}</p>
+                    </div>
+                    <button style="margin-right: 0;">
+                        Добавить
+                    </button>
+                    <button>
+                        <a href="{{ url_for('template_page', id=templ.id) }}"
+                        style="margin: 0;
+                        text-decoration: none;">
+                            Открыть
+                        </a>
+                    </button>
+                </div>
+                <ul>
+                    <li>
+                        <pre>
+                            <code data-language="{{templ.lang}}">
+{{templ.code}}
+                            </code>
+                        </pre>
+                    </li>
+                    <li>
+                        <div style="width: auto;"> <p>Автор</p> 
+                            <a href="{{ url_for('user', username=templ.profile_templates.base_settings.username) }}" style="color:#fff">
+                                    {{templ.profile_templates.base_settings.username}}
+                            </a>
+                        </div>
+                        <div style="width: auto;"> <p>Просмотров</p> <p>52 человека</p> </div>
+                        <div style="width: auto;"> <p>Оценили</p> <p>10 человек</p> </div>
+                        <div style="width: auto;"> <p>Комментарии</p> <p>5 человек</p> </div>
+                        <div style="margin-left: auto; width: 64px; height: 64px; display: flex;"> 
+                            <img class="like-img" src="../static/root/assets/heart.png">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
