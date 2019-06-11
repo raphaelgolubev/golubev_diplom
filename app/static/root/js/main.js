@@ -54,7 +54,10 @@ window.onload = async function(evt) {
         var sender = ev.srcElement;
         if (HasClass(sender, 'like-img'))
         {
-            sender.classList.add('like-img--active');
+            if (!HasClass(sender, 'like-img--active'))
+                sender.classList.add('like-img--active');
+            else
+                sender.classList.remove('like-img--active');
         }
     });
     var inputs = document.getElementsByTagName('input');

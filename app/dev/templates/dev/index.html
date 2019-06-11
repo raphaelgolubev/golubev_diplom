@@ -51,7 +51,11 @@
                         <td></td>
                     {% endif %}
                     <td>
-                        <button id="delete-user-{{user.id}}">Удалить</button>
+                        {% if user.id == current_user.id %}
+                            Нельзя удалить себя
+                        {% else %}
+                            <button id="delete-user-{{user.id}}">Удалить</button>
+                        {% endif %}
                     </td>
                 </tr>
             {% endif %}
