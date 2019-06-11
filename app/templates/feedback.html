@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block DOC_TITLE %}
+Связь
+{% endblock %}
+{% block CUSTOM_HEAD %}
+{% endblock %}
+{% block CUSTOM_CODE %}
+
+{% endblock %}
+{% block CONTENT %}
+<div class="full-page start-slide fadeUp-start-state" style="display: flex; top:90px; flex-direction: column;">
+    <h1 style="margin: 6rem 6rem 1rem 6rem; color: #fff;"> Обратная связь с разработчиком</h1>
+    <div id="add-code-templ-container" 
+    style="display: flex;margin-bottom: 3rem;margin-left: 6rem;flex-direction: column;left: 0;width: 50%;">
+            <p style="color:rgba(255,255,255,0.5);margin-left: 0rem; margin-bottom: 0; font-size: 1.2em;"> 
+                Вы можете оставить здесь предложение или жалобу, обратиться за помощью
+                и спросить интересующий Вас вопрос
+            </p>
+            <div style="display: flex; flex-direction: column;">
+                <div style="min-width: 290px; margin-right: 3rem; max-width: 75%;">
+                    <p style="color:rgba(255,255,255,0.4);margin-left: 0rem;"> 
+                        Когда разработчик ответит на ваш отзыв Вам придет уведомление
+                        об этом
+                    </p>
+                    <p style="color:rgba(255,255,255,0.3);margin-left: 0rem; font-size: 0.8em;"> 
+                        Все отзывы разработчик получает через социальную сеть "ВКонтакте"
+                    </p>
+                </div>
+                <textarea cols="30" rows="10" name="feedback-area"
+                style="width: 94%;
+                height: 300px;
+                margin: auto;
+                margin-bottom: 2rem;"></textarea>
+            </div>
+            
+            <div style="display: flex;">
+                <button id="send-feedback" style="margin: auto; width: 100%;">Отправить</button>
+            </div>
+        </div>
+</div>
+{% endblock %}

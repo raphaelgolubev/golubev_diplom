@@ -1,0 +1,6 @@
+Уважаемый {{ user.profile.base_settings.username }},
+Чтобы подтвердить почту
+ вы можете вставить следующую ссылку в адресную строку браузера:
+{{ url_for('confirm_email', token=token, _external=True) }}
+<p>С Уважением,</p>
+<p>администратор 4ACM</p>

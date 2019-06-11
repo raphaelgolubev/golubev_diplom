@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block DOC_TITLE %}
+Отказ доступа
+{% endblock %}
+
+{% block CUSTOM_HEAD %}
+    <style>
+        .forbidden {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            color: #fff;
+            transform: translate(-50%,-50%);
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block CONTENT %}
+<div class="forbidden">
+    <p style="font-size: 4em;"> Подтвердите адрес электронной почты </p>
+    <p style="color:rgba(255,255,255,0.5)"> Пока вы не перейдете по ссылке из письма, вы не сможете войти 
+    в аккаунт </p>
+</div>
+{% endblock %}

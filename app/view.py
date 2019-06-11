@@ -1,6 +1,6 @@
 from app import app, db
 import os
-from email_work import send_password_reset_email
+from email_work import send_password_reset_email, send_confirm_email_link
 from forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
 from models import User, Profile, BaseSettings, CodeTemplate
 from flask_login import current_user, login_user, logout_user,login_required
@@ -52,12 +52,22 @@ def template_page(id):
 def my_templates():
     return render_template('my-templates.html')
 
+@app.route('/feedback')
+@login_required
+def feedback():
+    return render_template('feedback.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        users = User.query.all()
+        for usr in users:
+            if usr.user_login == form.user_login.data:
+                flash('Такой логин уже существует')
+                return redirect(url_for('register', form=form))
         #создаем юзера
         user = User(user_login=form.user_login.data, email=form.email.data)
         #задаем пароль с помощью функции хэширования
@@ -76,8 +86,7 @@ def register():
         db.session.add(user)
         #Сохраняем изменения
         db.session.commit()
-        flash('Вы успешно зарегистрировались.')
-        return redirect(url_for('login'))
+        return redirect(url_for('confirm_email_request', id=user.id))
     return render_template('register.html', title='Register', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -90,17 +99,21 @@ def login():
         form = LoginForm()
         if form.validate_on_submit():
             user = User.query.filter_by(user_login=form.user_login.data).first()
-            #проверка пароля
-            if user is None or not user.check_password(form.password.data):
-                flash('Неверное имя пользователя или пароль.')
-                return redirect(url_for('login'))
-                
-            login_user(user, remember=form.remember_me.data)
-            next_page = request.args.get('next')
-            if not next_page or url_parse(next_page).netloc != '':
-                next_page = url_for('main')
+            if user:
+                if user.email_confirmed == 'True':
+                    #проверка пароля
+                    if user is None or not user.check_password(form.password.data):
+                        flash('Неверное имя пользователя или пароль.')
+                        return redirect(url_for('login'))
+                        
+                    login_user(user, remember=form.remember_me.data)
+                    next_page = request.args.get('next')
+                    if not next_page or url_parse(next_page).netloc != '':
+                        next_page = url_for('main')
 
-            return redirect(next_page)
+                    return redirect(next_page)
+                return '<h1> Вы не подтвердили адрес электронной почты </h2>'
+            return redirect(url_for('login', form=form))
     return render_template('login.html', form=form)
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
@@ -131,6 +144,27 @@ def reset_password(token):
         flash('Ваш пароль был изменён.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+@app.route('/confirm_email_request/<id>', methods=['GET', 'POST'])
+def confirm_email_request(id):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    uid = int(id)
+    user = User.query.filter_by(id=uid).first()
+    send_confirm_email_link(user)
+    return render_template('confirm_email_request.html')
+
+@app.route('/confirm_email/<token>', methods=['GET', 'POST'])
+def confirm_email(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = User.verify_confirm_email_token(token)
+    if not user:
+        flash('Ошибка верификации токена.')
+        return redirect(url_for('index'))
+    user.email_confirmed = 'True'
+    db.session.commit()
+    return redirect(url_for('login'))
 
 @app.route('/logout')
 def logout():   

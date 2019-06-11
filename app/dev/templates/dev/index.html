@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block DOC_TITLE %}
-Разработка
+Админ
 {% endblock %}
 
 {% block CUSTOM_HEAD %}
@@ -27,12 +27,12 @@
     <p style="margin:1rem; color: #fff"> Пользователи </p>
     <table style="margin:1rem">
         <th>Имя</th>
+        <th>Логин</th>
         <th>Почта</th>
         <th>Активность</th>
         <th>Роль</th>
         <th>Последний сеанс</th>
-        <th>Относительное время последнего входа</th>
-        <th>Действие</th>
+        <th>Удалить</th>
         {% for user in users %}
             {% if user.profile %}
                 <tr>
@@ -41,14 +41,17 @@
                             {{user.profile.base_settings.username}}
                         </a>
                     </td>
+                    <td>{{user.user_login}}</td>
                     <td>{{user.email}}</td>
                     <td>{{user.profile.active}}</td>
                     <td>{{user.role}}</td>
                     {% if user.profile.lastseen %}
-                    <td>{{ moment(user.profile.lastseen).format('LLL') }}</td>
-                        <td>{{ moment(user.profile.lastseen).fromNow() }}</td>
-                        {% else %}
-                        <td></td>
+                    <td style="max-width: 150px;">
+                        {{ moment(user.profile.lastseen).format('LLL') }}
+                        ({{ moment(user.profile.lastseen).fromNow() }})
+                    </td>
+                    {% else %}
+                    <td></td>
                     {% endif %}
                     <td>
                         {% if user.id == current_user.id %}

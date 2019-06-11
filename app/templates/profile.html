@@ -132,6 +132,7 @@
                 pointer-events: none;
             }
             .pic-action {   
+                cursor: pointer;
                 position: relative;
                 width: 50px;
                 height: 50px;
@@ -252,7 +253,7 @@
 {% block CONTENT %}
 <div class="full-page start-slide fadeUp-start-state" style="display:grid; top:90px;" id='starter'>
     <div class="profile-pic">
-        <img src="{{user.profile.photo}}" style="position: absolute;  width: 100%;
+        <img id="avatar-photo-img" src="{{user.profile.photo}}" style="position: absolute;  width: 100%;
         height: 100%;pointer-events: none; background-size: cover;">
         {% if current_user.profile.base_settings.username == user.profile.base_settings.username %}
             <div class="pic-actions-view">
@@ -262,12 +263,9 @@
                 <div class="pic-action pic-view bg-view" onclick="ShowViewAvatarDialog()">
                     
                 </div>
-                <!--div class="pic-action pic-edit">
+                <div class="pic-action pic-delete bg-delete" style="filter:invert(1)">
 
                 </div>
-                <div class="pic-action pic-delete">
-
-                </div>-->
             </div>
             {% else %}
             <div class="pic-actions-view">
@@ -441,14 +439,14 @@
         <hr>
         <div style="display: flex;">
             <p style="color:#fff;margin-left: 0rem;"> Текущий пароль </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;" id="actual-password">
         </div>
         <div style="display: flex;">
             <p style="color:#fff;margin-left: 0rem;"> Новый пароль </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
+                style="width: 300px;margin-left: auto; margin-bottom: 2rem;" id="new-password">
         </div>
         <div style="display: flex; margin: 3rem 0 8rem 0;">
-            <button style="margin-left: auto;">Сохранить</button>
+            <button style="margin-left: auto;" id="change-password-btn">Сохранить</button>
         </div>
     </div>
     <!-- API -->
@@ -499,40 +497,9 @@
     </div>
     <!-- ПЛАГИН -->
     <div id="settings-list-5" style="display: none;position: relative;left: 50%;transform: translateX(-50%);width: 50%;">
-        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Основные </p>
+        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Плагин </p>
         <hr>
         <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Имя пользователя </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
-        </div>
-        <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Электронная почта </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
-        </div>
-        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> Место проживания </p>
-        <hr>
-        <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Страна </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
-        </div>
-        <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Город </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
-        </div>
-
-        <p style="color:rgba(255,255,255,0.5);margin-left: 0rem;"> О себе </p>
-        <hr>
-        <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Интересы </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
-        </div>
-        <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Проекты </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
-        </div>
-        <div style="display: flex;">
-            <p style="color:#fff;margin-left: 0rem;"> Языки программирования </p><input type="text"
-                style="width: 300px;margin-left: auto; margin-bottom: 2rem;">
         </div>
     </div>
 </div>

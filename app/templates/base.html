@@ -149,14 +149,16 @@
 
             </div>
             <div class="hb-right">
-                    <div class="header-block">
-                            <a href="{{ url_for('library') }}" style="text-decoration: none;">
-                                <p>Лента</p>
-                            </a>
-                        </div>
-                        <div class="header-block">
-                            <p>Связь</p>
-                        </div>
+                <div class="header-block">
+                    <a href="{{ url_for('library') }}" style="text-decoration: none;">
+                        <p>Лента</p>
+                    </a>
+                </div>
+                <div class="header-block">
+                    <a href="{{ url_for('feedback') }}" style="text-decoration: none;">
+                        <p>Связь</p>
+                    </a>
+                </div>
                 {% if current_user.role == 'admin' %}
                     <div class="header-block">
                         <a href="{{ url_for('devel.index') }}" style="text-decoration: none;">

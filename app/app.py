@@ -26,11 +26,12 @@ manager.add_command('db', MigrateCommand)
 #обновляем только конфиги почты
 app.config.update(
 	#EMAIL SETTINGS
-	MAIL_SERVER='smtp.gmail.com',
-	MAIL_PORT=465,
-	MAIL_USE_SSL=True,
-	MAIL_USERNAME = 'root.oneproject@gmail.com',
-	MAIL_PASSWORD = 'gieivoksolvwctry'
+    MAIL_SERVER = 'smtp.gmail.com',
+    MAIL_PORT = 465,
+    MAIL_USE_TSL = False,
+	MAIL_USE_SSL = True,
+    MAIL_USERNAME = '4acm.adm@gmail.com',
+    MAIL_PASSWORD = 'rravjcyxojqqtecm'
 	)
 #почта
 from flask_mail import Mail

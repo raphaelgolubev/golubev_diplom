@@ -18,6 +18,11 @@ class RegistrationForm(FlaskForm):
         'Повторите пароль', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Зарегистрироваться')
 
+    def validate_login(self, user_login):
+        user = User.query.filter_by(user_login=user_login.data).first()
+        if user is not None:
+            raise ValidationError('Пожалуйста, используйте другой логин.')
+
     def validate_username(self, username):
         user = BaseSettings.query.filter_by(username=username.data).first()
         if user is not None:
@@ -30,10 +35,10 @@ class RegistrationForm(FlaskForm):
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Request Password Reset')
+    submit = SubmitField('Отправить ссылку')
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Request Password Reset')
+    submit = SubmitField('Восстановить пароль')
