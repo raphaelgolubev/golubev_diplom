@@ -1,4 +1,5 @@
-# golubev_diplom
+# ARCHIVED
+## golubev_diplom
 This is my diplom project source code
 
 Требуются установленные:
