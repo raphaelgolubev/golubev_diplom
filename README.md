@@ -1,4 +1,8 @@
 # ARCHIVED
+Проверил на наличие всяких секретиков, которые я в свое время почему-то не всунул в .env файл
+Ничего полезного не обнаружил
+
+
 ## golubev_diplom
 This is my diplom project source code
 
